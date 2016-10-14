@@ -13,6 +13,8 @@ First, clone the repo
 go get github.com/juanjcsr/twittercli
 ```
 
-For the first time run, you will need two environment variables: *TWITTER_CONSUMER_KEY* and *TWITTER_CONSUMER_SECRET*
+To run it for the first time, you will need your **Twitter Consumer Key** and your **Twitter Consumer Secret**
 
-`TWITTER_CONSUMER_KEY=<your consumer key> TWITTER_CONSUMER_SECRET<your secret key> go run twittercli.go`
+```go run twitter.go```
+
+inside the cloned repository directory.
