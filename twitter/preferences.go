@@ -33,7 +33,7 @@ func (p *Preferences) Open() (bool, error) {
 }
 
 // Update saves the K/V to the db
-func (p *Preferences) Update(key, value string) {
+func (p *Preferences) Update(key string, value string) {
 	p.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(bucketName))
 		err := bucket.Put([]byte(key), []byte(value))

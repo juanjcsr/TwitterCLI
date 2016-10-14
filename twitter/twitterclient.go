@@ -11,6 +11,8 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
+const twitterBaseUrl = "https://api.twitter.com/1.1/"
+
 //var requestSecret string
 //var requestToken string
 //var verifier string
@@ -29,6 +31,17 @@ func NewTwitterClient(token *oauth1.Token, config oauth1.Config) *Client {
 	twitterClient := new(Client)
 	twitterClient.HTTPClient = config.Client(oauth1.NoContext, token)
 	return twitterClient
+}
+
+// IsLoggedIn checks if the access tokens are working
+func (c *Client) IsLoggedIn() bool {
+	resp, _ := c.HTTPClient.Get(twitterBaseUrl + "account/verify_credentials.json")
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return false
+	}
+	return true
+
 }
 
 // func handleAuth(w http.ResponseWriter, r *http.Request) {
