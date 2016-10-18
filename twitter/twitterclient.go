@@ -8,34 +8,36 @@ import (
 
 // Client that makes auth requests
 type Client struct {
-	HTTPClient *http.Client
+	httpClient *http.Client
+	Timeline   *TimelineService
 }
 
-const twitterBaseUrl = "https://api.twitter.com/1.1/"
+const twitterBaseURL = "https://api.twitter.com/1.1/"
 
 //var requestSecret string
 //var requestToken string
 //var verifier string
 //var oauthErrors error
-var accessToken, accessSecret string
-var twitterTokens *oauth1.Token
-var httpClient *http.Client
-var prefs *Preferences
-
-func main() {
-
-}
+// var accessToken, accessSecret string
+// var twitterTokens *oauth1.Token
+// var httpClient *http.Client
+// var prefs *Preferences
 
 // NewTwitterClient creates an auth twitter client
 func NewTwitterClient(token *oauth1.Token, config oauth1.Config) *Client {
-	twitterClient := new(Client)
-	twitterClient.HTTPClient = config.Client(oauth1.NoContext, token)
-	return twitterClient
+	///twitterClient := new(Client)
+	// twitterClient.httpClient = config.Client(oauth1.NoContext, token)
+	// return twitterClient
+	authedClient := config.Client(oauth1.NoContext, token)
+	return &Client{
+		httpClient: authedClient,
+		Timeline:   newTimeLineService(authedClient),
+	}
 }
 
 // IsLoggedIn checks if the access tokens are working
 func (c *Client) IsLoggedIn() bool {
-	resp, _ := c.HTTPClient.Get(twitterBaseUrl + "account/verify_credentials.json")
+	resp, _ := c.httpClient.Get(twitterBaseURL + "account/verify_credentials.json")
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		return false

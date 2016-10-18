@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -18,13 +17,13 @@ const tokenSecretStorage = "token_secret"
 func main() {
 	client, _ := Login()
 
-	resp, err := client.HTTPClient.Get("https://api.twitter.com/1.1/statuses/user_timeline.json")
+	resp, err := client.Timeline.GetTimeline()
 	if err != nil {
 		fmt.Printf("Could not get, error: %s", err.Error())
+		os.Exit(1)
 	}
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Printf("TIMELINE: %v", string(body))
+
+	fmt.Printf("TIMELINE: %v", resp)
 
 }
 
