@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/chzyer/readline"
 	"github.com/dghubble/oauth1"
 	"github.com/juanjcsr/twittercli/twitter"
 )
@@ -15,15 +18,66 @@ const tokenStorage = "token"
 const tokenSecretStorage = "token_secret"
 
 func main() {
+
+	l, _ := readline.NewEx(&readline.Config{
+		Prompt:          "\033[31m»\033[0m ",
+		InterruptPrompt: "^C",
+		EOFPrompt:       "exit",
+	})
+	defer l.Close()
+
+	log.SetOutput(l.Stderr())
+
 	client, _ := Login()
 
-	resp, err := client.Timeline.GetTimeline()
-	if err != nil {
-		fmt.Printf("Could not get, error: %s", err.Error())
-		os.Exit(1)
-	}
+	for {
+		line, err := l.Readline()
+		if err == readline.ErrInterrupt {
+			if len(line) == 0 {
+				break
+			} else {
+				continue
+			}
+		} else if err == io.EOF {
+			break
+		}
+		line = strings.TrimSpace(line)
+		log.Printf("LINE: %s", line)
+		switch {
+		case strings.HasPrefix(line, "user"):
+			//line := strings.TrimSpace(line[4:])
+			username := strings.TrimPrefix(line, "user")
+			log.Printf("username: %s", username)
+			if username != "" {
+				log.Printf("LINE in user: %s", line)
+				resp, err := client.Timeline.GetUserTimeline(username)
+				if err != nil {
+					log.Printf("Could not get, error: %s", err.Error())
+					break
+				}
 
-	fmt.Printf("TIMELINE: %v", resp)
+				for _, tuit := range resp {
+					tuit.Print(os.Stdout)
+				}
+			}
+
+			// arg, err := l.Readline()
+			// if arg == "" {
+			// 	log.Printf("error: %s", err)
+			// 	break
+			// }
+			// log.Printf("HOLAAA, %s", arg)
+		case strings.HasPrefix(line, "home"):
+			resp, err := client.Timeline.GetHomeTimeline()
+			if err != nil {
+				log.Printf("Could not get, error: %s", err.Error())
+				break
+			}
+			for _, tuit := range resp {
+				tuit.Print(os.Stdout)
+			}
+		}
+	}
 
 }
 
