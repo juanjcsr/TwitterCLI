@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/juanjcsr/twittercli)](https://goreportcard.com/report/github.com/juanjcsr/twittercli)
+
 # TwitterCLI
 
 **Twitter CLI** is a lightweight Twitter CLI I made in order to learn more about Go. 
