@@ -29,6 +29,7 @@ func main() {
 	log.SetOutput(l.Stderr())
 
 	client, _ := Login()
+	//var client twitter.Client
 
 	for {
 		line, err := l.Readline()
